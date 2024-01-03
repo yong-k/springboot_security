@@ -79,7 +79,7 @@
                     </div>
 
                     <div class="userform-btn-box">
-                        <button id="saveBtn" type="button" class="btn_l userform-btn">등록</button>
+                        <button id="saveBtn" type="button" class="btn_l">등록</button>
                         <div class="errMsg invalid-feedback" id="requiredErrMsg">닉네임, 비밀번호, 이메일은 필수 입력 항목입니다.</div>
                     </div>
                 </form>

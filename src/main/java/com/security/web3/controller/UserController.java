@@ -12,10 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Controller
@@ -112,9 +109,12 @@ public class UserController {
         return "redirect:/user/info";
     }
 
-    @GetMapping("/user/delete")
-    public String deleteUser(@AuthenticationPrincipal PrincipalDetails principalDetails, Model model) {
+    @PostMapping("/user/delete")
+    public String deleteUser(@RequestBody String password, @AuthenticationPrincipal PrincipalDetails principalDetails, Model model) {
         try {
+            String inputPw = password.substring(9);
+            if (!bCryptPasswordEncoder.matches(inputPw, principalDetails.getPassword()))
+                return "redirect:/user/withdrawform?code=-1";
             userService.deleteUser(principalDetails.getId());
         } catch (DataNotFoundException e) {
             model.addAttribute("code", ResultCode.DATA_NOT_FOUND.value());
@@ -124,7 +124,25 @@ public class UserController {
             log.error("Error in UserController.deleteUser()", e);
             return "error/error";
         }
-        return "redirect:/";
+        return "redirect:/?code=2";
+    }
+
+    @GetMapping("/user/pwcheckform")
+    public String pwcheckform() {
+        return "pwCheck";
+    }
+
+    @PostMapping("/user/checkpw")
+    public String checkPassword(@RequestBody String password, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        String inputPw = password.substring(9);
+        if (bCryptPasswordEncoder.matches(inputPw, principalDetails.getPassword()))
+            return "redirect:/user/updateform";
+        return "redirect:/user/pwcheckform?code=-1";
+    }
+
+    @GetMapping("/user/withdrawform")
+    public String withdrawform() {
+        return "withdrawform";
     }
 
     @GetMapping("/checkusername")

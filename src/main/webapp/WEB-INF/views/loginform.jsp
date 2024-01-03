@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="confirm-btn-box">
-                        <button id="loginBtn" class="btn_l">로그인</button>
+                        <button class="btn_l btn_top">로그인</button>
                         <a class="btn_l btn_gray" href="/joinform">회원가입</a>
                     </div>
                 </form>

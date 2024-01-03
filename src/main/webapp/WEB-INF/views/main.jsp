@@ -8,6 +8,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="/css/style.css" rel="stylesheet">
 </head>
+<script>
+    /**
+     * [code]
+     * 2 : 회원 탈퇴가 완료되었습니다.
+     * */
+    let queryString = window.location.search;
+    let urlParams = new URLSearchParams(queryString);
+    let code = urlParams.get("code");
+
+    if (code == 2) 
+        alert("회원탈퇴가 완료되었습니다.");
+</script>
 <body>
 
     <jsp:include page="header.jsp"></jsp:include>

@@ -80,7 +80,7 @@ div#loginErrMsg #errMsg {
 .btn_l:hover {
   background-color: #145fe0;
 }
-button#loginBtn {
+.btn_top {
     margin-bottom: 3%;
 }
 a.btn_l {
@@ -121,6 +121,16 @@ button#saveBtn {
 }
 button#saveBtn:disabled {
   background-color: #9fa5aa;
+}
+
+/*userinfo*/
+#updateformBtn {
+  margin-top: 10%;
+}
+
+/*withdrawform*/
+p#withdraw-info {
+  color: #666666;
 }
 
 /*user*/
