@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.security.web3.mapper.UserMapper">
+
+    <insert id="createUser">
+        INSERT INTO User (name, username, email, password, address, phone, website, company)
+        VALUES (#{name}, #{username}, #{email}, #{password}, #{address}, #{phone}, #{website}, #{company})
+    </insert>
+
+    <select id="getUserById">
+        SELECT id, name, username, email, password, address, phone, website, company
+        FROM User
+        WHERE id = #{id}
+    </select>
+
+    <select id="getUserByUsername">
+        SELECT id, name, username, email, password, address, phone, website, company
+        FROM User
+        WHERE username = #{username}
+    </select>
+
+    <update id="updateUser">
+        UPDATE User
+        SET name = #{name},
+            username = #{username},
+            email = #{email},
+            password = #{password},
+            address = #{address},
+            phone = #{phone},
+            website = #{website},
+            company = #{company}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUser">
+        DELETE FROM User
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

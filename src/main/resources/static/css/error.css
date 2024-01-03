@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'NanumGothic';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Regular.eot);
+    src: local("Nanum Gothic Regular"),local("NanumGothicR"),url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Regular.eot?#iefix) format("embedded-opentype"),url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Regular.woff2) format("woff2"),url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Regular.woff) format("woff"),url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Regular.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: 'NanumGothic';
+    font-style: normal;
+    font-weight: 700;
+    src: url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Bold.eot);
+    src: local("Nanum Gothic Bold"),local("NanumGothicB"),url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Bold.eot?#iefix) format("embedded-opentype"),url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Bold.woff2) format("woff2"),url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Bold.woff) format("woff"),url(https://ssl.pstatic.net/static/blog/font/NanumGothic-Bold.ttf) format("truetype")
+}
+html { height: 100%; }
+body { overflow: hidden; margin: 0; display: table; width: 100%; height: 100%; }
+.error_wrap { display: table-cell; font-family: NanumGothic, sans-serif; text-align: center; vertical-align: middle; }
+.error_svg { line-height: 0; }
+.error_h1 { margin: 28px 0 0; font-size: 24px; line-height: 32px; font-weight: 700; color: #000; }
+.error_p { margin: 8px 0 0; font-size: 15px; line-height: 21px; color: #000; }
+.error_p .br{display:none;}
+.area_btn{margin-top:44px;font-size:0;line-height:0;}
+.area_btn .link{display:inline-block;width:280px;height:48px;border-radius:6px;background-color:#323232;font-size:15px;line-height:48px;color:#fff;font-weight:700;text-align:center;text-decoration:none}
+@media ( max-width: 600px ) {
+    .error_p .br{display:block;}
+}
