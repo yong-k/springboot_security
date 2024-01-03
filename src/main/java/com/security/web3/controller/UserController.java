@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Slf4j
 @Controller
@@ -54,7 +56,7 @@ public class UserController {
             log.error("Error in UserController.createUser()", e);
             return "error/error";
         }
-        return "redirect:/loginform";
+        return "redirect:/loginform?code=1";
     }
 
     @GetMapping("/user/info")
@@ -123,5 +125,15 @@ public class UserController {
             return "error/error";
         }
         return "redirect:/";
+    }
+
+    @GetMapping("/checkusername")
+    public @ResponseBody Integer checkDuplicateUsername(@RequestParam(required = false) Long id, @RequestParam String username) {
+        return userService.countDuplicateUsername(id, username);
+    }
+
+    @GetMapping("/checkemail")
+    public @ResponseBody Integer checkDuplicateEmail(@RequestParam(required = false) Long id, @RequestParam String email) {
+        return userService.countDuplicateEmail(id, email);
     }
 }

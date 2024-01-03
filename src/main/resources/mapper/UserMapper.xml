@@ -37,4 +37,22 @@
         WHERE id = #{id}
     </delete>
 
+    <select id="countDuplicateUsername" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM User
+        WHERE username = #{username}
+        <if test="id != null">
+            AND id != #{id}
+        </if>
+    </select>
+
+    <select id="countDuplicateEmail" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM User
+        WHERE email = #{email}
+        <if test="id != null">
+            AND id != #{id}
+        </if>
+    </select>
+
 </mapper>

@@ -95,6 +95,34 @@ a.btn_l {
   background-color: #ebebeb;
 }
 
+/*joinform*/
+.form-border-box#join-box {
+  padding: 55px 80px 50px 80px;
+}
+#joinform label {
+  font-size: 14px;
+  text-align: left;
+}
+span.form-required {
+  color: red;
+  font-size: 18px;
+  margin-left: 5%;
+}
+div.errMsg {
+  text-align: left;
+  font-size: 12px;
+}
+div#requiredErrMsg {
+  text-align: center;
+  margin-top: 0.5%;
+}
+button#saveBtn {
+  margin-top: 10%;
+}
+button#saveBtn:disabled {
+  background-color: #9fa5aa;
+}
+
 /*user*/
 /*
 label {
@@ -122,19 +150,6 @@ label {
 button.userform-btn {
   width: 8%;
   margin-left: 1%;
-}
-span.form-required {
-  color: red;
-  font-size: 18px;
-  margin-left: 5%;
-}
-div.errMsg {
-  text-align: left;
-  font-size: 12px;
-}
-div#requiredErrMsg {
-  text-align: center;
-  margin-top: 0.5%;
 }
 th:hover {
   cursor: default;
