@@ -56,7 +56,13 @@ input.login {
   caret-color: #191919;
 }
 div#loginErrMsg {
+  text-align: left;
+}
+div#loginErrMsg #errMsg {
   display: none;
+  color: #ff003e;
+  font-size: 13px;
+  letter-spacing: -.5px;
 }
 .confirm-btn-box {
   padding-top: 40px;

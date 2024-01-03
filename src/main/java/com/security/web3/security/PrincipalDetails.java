@@ -1,4 +1,4 @@
-package com.security.web3.auth;
+package com.security.web3.security;
 
 import com.security.web3.vo.UserVo;
 import org.springframework.security.core.GrantedAuthority;

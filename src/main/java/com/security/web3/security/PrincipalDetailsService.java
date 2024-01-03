@@ -1,4 +1,4 @@
-package com.security.web3.auth;
+package com.security.web3.security;
 
 import com.security.web3.mapper.UserMapper;
 import com.security.web3.vo.UserVo;
@@ -17,8 +17,9 @@ public class PrincipalDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserVo user = userMapper.getUserByUsername(username);
-        if (user != null)
-            return new PrincipalDetails(user);
-        return null;
+
+        if (user == null)
+            throw new UsernameNotFoundException(username);
+        return new PrincipalDetails(user);
     }
 }

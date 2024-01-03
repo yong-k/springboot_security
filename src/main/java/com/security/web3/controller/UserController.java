@@ -1,6 +1,6 @@
 package com.security.web3.controller;
 
-import com.security.web3.auth.PrincipalDetails;
+import com.security.web3.security.PrincipalDetails;
 import com.security.web3.consts.ResultCode;
 import com.security.web3.exception.DataNotFoundException;
 import com.security.web3.service.UserService;

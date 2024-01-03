@@ -1,5 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +20,7 @@
             </div>
 
             <div class="form-border-box">
-                <form id="" action="/login" method="post">
+                <form action="/login" method="post">
                      <div class="mb-3 text-box">
                         <input type="username" id="username" class="login" name="username" placeholder="아이디">
                      </div>
@@ -28,10 +29,7 @@
                     </div>
 
                     <div id="loginErrMsg">
-                        <sec:authorize access="isAnonymous()">
-                            <span class="errMsg">아이디 혹은 비밀번호가 일치하지 않습니다.</span>
-                            <span class="errMsg">입력한 내용을 다시 확인해주세요.</span>
-                        </sec:authorize>
+                        <span id="errMsg">아이디 혹은 비밀번호가 일치하지 않습니다.<br>입력한 내용을 다시 확인해주세요.</span>
                     </div>
 
                     <div class="confirm-btn-box">
@@ -43,9 +41,6 @@
         </div>
     </div>
 
-    <jsp:include page="footer.jsp"></jsp:include>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="/js/loginform.js"></script>
 </body>
 </html>

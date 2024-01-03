@@ -1,4 +1,4 @@
-package com.security.web3.config;
+package com.security.web3.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +23,7 @@ public class SecurityConfig {
                         .loginPage("/loginform")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/user/info")
+                        .failureHandler(loginFailureHandler())
                         .permitAll()
                 );
         return http.build();
@@ -31,5 +32,10 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public LoginFailureHandler loginFailureHandler() {
+        return new LoginFailureHandler();
     }
 }
