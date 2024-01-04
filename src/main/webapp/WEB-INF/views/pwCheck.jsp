@@ -7,19 +7,19 @@
     <meta charset="UTF-8">
     <title>web3 : 비밀번호 확인</title>
     <link href="/css/style.css" rel="stylesheet">
-</head>
-<script>
-    /**
-     * [code]
-     * -1 : 비밀번호가 일치하지 않습니다.
-     * */
-    let queryString = window.location.search;
-    let urlParams = new URLSearchParams(queryString);
-    let code = urlParams.get("code");
+    <script>
+        /**
+         * [code]
+         * -3 : 비밀번호가 일치하지 않습니다.
+         * */
+        let queryString = window.location.search;
+        let urlParams = new URLSearchParams(queryString);
+        let code = urlParams.get("code");
 
-    if (code == -1)
-        alert("비밀번호가 일치하지 않습니다.");
-</script>
+        if (code == -3)
+            alert("비밀번호가 일치하지 않습니다.");
+    </script>
+</head>
 <body>
 
     <jsp:include page="header.jsp"></jsp:include>
@@ -43,6 +43,5 @@
         </div>
     </div>
 
-    <script src="/js/loginform.js"></script>
 </body>
 </html>

@@ -28,6 +28,10 @@ public class PrincipalDetails implements UserDetails {
         return user.getPassword();
     }
 
+    public void setPassword(String password) {
+        this.user.setPassword(password);
+    }
+
     @Override
     public String getUsername() {
         return user.getUsername();

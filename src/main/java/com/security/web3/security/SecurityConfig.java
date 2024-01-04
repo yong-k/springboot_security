@@ -25,6 +25,10 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/user/info")
                         .failureHandler(loginFailureHandler())
                         .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
                 );
         return http.build();
     }

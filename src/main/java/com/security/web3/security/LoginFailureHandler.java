@@ -1,5 +1,6 @@
 package com.security.web3.security;
 
+import com.security.web3.consts.ResultCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,23 +16,16 @@ import java.io.IOException;
 public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-
-        /**
-         * [loginErrCode]
-         * -1: 아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해주세요.
-         * -2: 시스템 문제로 로그인 요청을 처리할 수 없습니다. 관리자에게 문의하세요.
-         * -99: 예상치 못한 오류가 발생했습니다.
-         * */
-        int loginErrCode;
+        int errCode;
 
         if (exception instanceof BadCredentialsException)
-            loginErrCode = -1;
+            errCode = ResultCode.SECURITY_BAD_CREDENTIALS.value();
         else if (exception instanceof InternalAuthenticationServiceException)
-            loginErrCode = -2;
+            errCode = ResultCode.SECURITY_INTERNAL_AUTHENTICATION_SERVICE.value();
         else
-            loginErrCode = -99;
+            errCode = ResultCode.UNKNOWN_ERROR.value();
 
-        setDefaultFailureUrl("/loginform?code=" + loginErrCode);
+        setDefaultFailureUrl("/loginform?code=" + errCode);
         super.onAuthenticationFailure(request, response, exception);
     }
 }

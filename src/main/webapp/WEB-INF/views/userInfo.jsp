@@ -75,12 +75,5 @@
     <jsp:include page="footer.jsp"></jsp:include>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script>
-        document.getElementById("withdrawBtn").onclick = () => {
-            let response = confirm("회원을 탈퇴하시겠습니까?");
-            if (response)
-                window.location.href="/user/pwcheckform"
-        };
-    </script>
 </body>
 </html>

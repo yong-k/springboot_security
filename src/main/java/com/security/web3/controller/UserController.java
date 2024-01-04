@@ -53,7 +53,7 @@ public class UserController {
             log.error("Error in UserController.createUser()", e);
             return "error/error";
         }
-        return "redirect:/loginform?code=1";
+        return "redirect:/loginform?code=" + ResultCode.JOIN_COMPLETE.value();
     }
 
     @GetMapping("/user/info")
@@ -91,7 +91,14 @@ public class UserController {
     @PostMapping("/user/update")
     public String updateUser(@AuthenticationPrincipal PrincipalDetails principalDetails, Model model, UserVo user) {
         try {
-            String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+            String encodedPassword = "";
+            System.out.println(user.getPassword().isEmpty());
+            if (user.getPassword().isEmpty()) {
+                encodedPassword = principalDetails.getPassword();
+            } else {
+                encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+                principalDetails.setPassword(encodedPassword);
+            }
             user.setId(principalDetails.getId());
             user.setPassword(encodedPassword);
             userService.updateUser(user);
@@ -114,8 +121,9 @@ public class UserController {
         try {
             String inputPw = password.substring(9);
             if (!bCryptPasswordEncoder.matches(inputPw, principalDetails.getPassword()))
-                return "redirect:/user/withdrawform?code=-1";
+                return "redirect:/user/withdrawform?code=" + ResultCode.MISMATCH_PASSWORD.value();
             userService.deleteUser(principalDetails.getId());
+            model.addAttribute("code", 2);
         } catch (DataNotFoundException e) {
             model.addAttribute("code", ResultCode.DATA_NOT_FOUND.value());
             return "error/error";
@@ -124,7 +132,7 @@ public class UserController {
             log.error("Error in UserController.deleteUser()", e);
             return "error/error";
         }
-        return "redirect:/?code=2";
+        return "redirect:/?code=" + ResultCode.WITHDRAW_COMPLETE.value();
     }
 
     @GetMapping("/user/pwcheckform")
@@ -137,7 +145,7 @@ public class UserController {
         String inputPw = password.substring(9);
         if (bCryptPasswordEncoder.matches(inputPw, principalDetails.getPassword()))
             return "redirect:/user/updateform";
-        return "redirect:/user/pwcheckform?code=-1";
+        return "redirect:/user/pwcheckform?code=" + ResultCode.MISMATCH_PASSWORD.value();
     }
 
     @GetMapping("/user/withdrawform")
@@ -146,12 +154,24 @@ public class UserController {
     }
 
     @GetMapping("/checkusername")
-    public @ResponseBody Integer checkDuplicateUsername(@RequestParam(required = false) Long id, @RequestParam String username) {
+    public @ResponseBody Integer checkDuplicateUsername(@RequestParam String username, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long id = null;
+        if (principalDetails != null)
+            id = principalDetails.getId();
         return userService.countDuplicateUsername(id, username);
     }
 
     @GetMapping("/checkemail")
-    public @ResponseBody Integer checkDuplicateEmail(@RequestParam(required = false) Long id, @RequestParam String email) {
+    public @ResponseBody Integer checkDuplicateEmail(@RequestParam String email, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long id = null;
+        if (principalDetails != null)
+            id = principalDetails.getId();
         return userService.countDuplicateEmail(id, email);
+    }
+
+    @PostMapping("/checknowpw")
+    public @ResponseBody boolean checkNowPassword(@RequestBody String nowPassword, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        String inputPw = nowPassword.substring(12);
+        return bCryptPasswordEncoder.matches(inputPw, principalDetails.getPassword());
     }
 }

@@ -19,10 +19,10 @@
             </div>
 
             <div class="form-border-box">
-                <form action="/login" method="post">
-                     <div class="mb-3 text-box">
+                <form id="loginform" action="/login" method="post">
+                    <div class="mb-3 text-box">
                         <input type="username" id="username" class="login" name="username" placeholder="아이디">
-                     </div>
+                    </div>
                     <div class="mb-3 text-box">
                         <input type="password" id="password" class="login" name="password" placeholder="비밀번호">
                     </div>
@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="confirm-btn-box">
-                        <button class="btn_l btn_top">로그인</button>
+                        <button id="loginBtn" type="button" class="btn_l btn_top">로그인</button>
                         <a class="btn_l btn_gray" href="/joinform">회원가입</a>
                     </div>
                 </form>

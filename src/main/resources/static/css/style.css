@@ -81,15 +81,15 @@ div#loginErrMsg #errMsg {
   background-color: #145fe0;
 }
 .btn_top {
-    margin-bottom: 3%;
+  margin-bottom: 3%;
 }
 a.btn_l {
   text-decoration: none;
   padding-top: 2.7%;
 }
 .btn_gray {
-    color: #191919;
-    background-color: #f0f0f0;
+  color: #191919;
+  background-color: #f0f0f0;
 }
 .btn_gray:hover {
   background-color: #ebebeb;
@@ -99,8 +99,8 @@ a.btn_l {
 .form-border-box#join-box {
   padding: 55px 80px 50px 80px;
 }
-#joinform label {
-  font-size: 14px;
+#joinform label, #updateform label {
+  font-size: 13.5px;
   text-align: left;
 }
 span.form-required {
