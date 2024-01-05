@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface UserMapper {
-    int createUser(UserVo user);
+    void createUser(UserVo user);
 
     UserVo getUserById(long id);
 

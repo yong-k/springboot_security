@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,6 +61,15 @@ public class UserController {
     @GetMapping("/user/info")
     public String getUserInfo(@AuthenticationPrincipal PrincipalDetails principalDetails, Model model) {
         try {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserDetails userDetails = (UserDetails) principal;
+
+            System.out.println("getPrincipal() = " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            System.out.println("getCredentials() = " + SecurityContextHolder.getContext().getAuthentication().getCredentials());
+            System.out.println("getautho() = " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+            System.out.println("userDetails.getUsername() : " + userDetails.getUsername());
+            System.out.println("userDetails.getAuthorities() : " + userDetails.getAuthorities());
+
             UserVo user = userService.getUserById(principalDetails.getId());
             model.addAttribute("user", user);
         } catch (DataNotFoundException e) {
@@ -175,3 +186,4 @@ public class UserController {
         return bCryptPasswordEncoder.matches(inputPw, principalDetails.getPassword());
     }
 }
+
