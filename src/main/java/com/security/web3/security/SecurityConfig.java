@@ -1,8 +1,10 @@
 package com.security.web3.security;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -18,23 +20,26 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/user/**").authenticated()
+//                        .requestMatchers("/user/**").authenticated()
 //                        .requestMatchers("/user/**").hasAnyRole("USER")
-                                .anyRequest().permitAll()
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                        .requestMatchers("/", "/loginform", "/joinform", "/join", "/checkusername", "/checkemail").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                                .loginPage("/loginform")
-                                .loginProcessingUrl("/login")
-//                        .usernameParameter("id")
-//                        .passwordParameter("pw")
-                                .defaultSuccessUrl("/user/info")
-                                .failureHandler(loginFailureHandler())
-                                .permitAll()
+                        .loginPage("/loginform")
+                        .loginProcessingUrl("/login")
+                        .usernameParameter("id")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/user/info")
+                        .failureHandler(loginFailureHandler())
+                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
-                );
+                )
+                .authenticationProvider(authenticationProvider());
         return http.build();
     }
 
@@ -52,8 +57,12 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web -> web
                 .ignoring()
-                //.requestMatchers("/css/**", "/js/**")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
         );
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        return new UserAuthenticationProvider();
     }
 }

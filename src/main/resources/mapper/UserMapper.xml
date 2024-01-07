@@ -21,38 +21,44 @@
 
     <update id="updateUser">
         UPDATE User
-        SET name = #{name},
-            username = #{username},
+        <set>
+            name = #{name},
             email = #{email},
-            password = #{password},
+            <if test="password != ''">
+                password = #{password},
+            </if>
             address = #{address},
             phone = #{phone},
             website = #{website},
             company = #{company}
-        WHERE id = #{id}
+        </set>
+        WHERE username = #{username}
     </update>
 
     <delete id="deleteUser">
         DELETE FROM User
-        WHERE id = #{id}
+        WHERE username = #{username}
     </delete>
 
     <select id="countDuplicateUsername" resultType="java.lang.Integer">
         SELECT COUNT(*)
         FROM User
         WHERE username = #{username}
-        <if test="id != null">
-            AND id != #{id}
-        </if>
     </select>
 
     <select id="countDuplicateEmail" resultType="java.lang.Integer">
         SELECT COUNT(*)
         FROM User
         WHERE email = #{email}
-        <if test="id != null">
-            AND id != #{id}
+        <if test="username != null">
+            AND username != #{username}
         </if>
+    </select>
+
+    <select id="getEncodedPassword" resultType="java.lang.String">
+        SELECT password
+        FROM User
+        WHERE username = #{username}
     </select>
 
 </mapper>

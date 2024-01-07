@@ -24,7 +24,8 @@
             </sec:authorize>
             <sec:authorize access="isAuthenticated()">
                 <ul class="nav">
-                    <li class="nav-item"><span class="nav-link link-body-emphasis px-2"><sec:authentication property="principal.username"/>님</span></li>
+                    <%--<li class="nav-item"><span class="nav-link link-body-emphasis px-2"><sec:authentication property="principal.username"/>님</span></li>--%>
+                    <li class="nav-item"><span class="nav-link link-body-emphasis px-2"><sec:authentication property="principal"/>님</span></li>
                     <li class="nav-item"><a href="/user/info" class="nav-link link-body-emphasis px-2">마이페이지</a></li>
                     <li class="nav-item"><a href="/logout" class="nav-link link-body-emphasis px-2">로그아웃</a></li>
                 </ul>

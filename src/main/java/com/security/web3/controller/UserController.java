@@ -1,6 +1,5 @@
 package com.security.web3.controller;
 
-import com.security.web3.security.PrincipalDetails;
 import com.security.web3.consts.ResultCode;
 import com.security.web3.exception.DataNotFoundException;
 import com.security.web3.service.UserService;
@@ -8,9 +7,7 @@ import com.security.web3.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,8 +41,6 @@ public class UserController {
     @PostMapping("/join")
     public String createUser(Model model, UserVo user) {
         try {
-            String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-            user.setPassword(encodedPassword);
             userService.createUser(user);
         } catch (DataIntegrityViolationException e) {
             model.addAttribute("code", ResultCode.DATA_INTEGRITY_VIOLATION.value());
@@ -59,18 +54,10 @@ public class UserController {
     }
 
     @GetMapping("/user/info")
-    public String getUserInfo(@AuthenticationPrincipal PrincipalDetails principalDetails, Model model) {
+    public String getUserInfo(Model model) {
         try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            UserDetails userDetails = (UserDetails) principal;
-
-            System.out.println("getPrincipal() = " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-            System.out.println("getCredentials() = " + SecurityContextHolder.getContext().getAuthentication().getCredentials());
-            System.out.println("getautho() = " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-            System.out.println("userDetails.getUsername() : " + userDetails.getUsername());
-            System.out.println("userDetails.getAuthorities() : " + userDetails.getAuthorities());
-
-            UserVo user = userService.getUserById(principalDetails.getId());
+            String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserVo user = userService.getUserByUsername(username);
             model.addAttribute("user", user);
         } catch (DataNotFoundException e) {
             model.addAttribute("code", ResultCode.DATA_NOT_FOUND.value());
@@ -84,9 +71,10 @@ public class UserController {
     }
 
     @GetMapping("/user/updateform")
-    public String updateform(@AuthenticationPrincipal PrincipalDetails principalDetails, Model model) {
+    public String updateform(Model model) {
         try {
-            UserVo user = userService.getUserById(principalDetails.getId());
+            String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserVo user = userService.getUserByUsername(username);
             model.addAttribute("user", user);
         } catch (DataNotFoundException e) {
             model.addAttribute("code", ResultCode.DATA_NOT_FOUND.value());
@@ -100,18 +88,8 @@ public class UserController {
     }
 
     @PostMapping("/user/update")
-    public String updateUser(@AuthenticationPrincipal PrincipalDetails principalDetails, Model model, UserVo user) {
+    public String updateUser(Model model, UserVo user) {
         try {
-            String encodedPassword = "";
-            System.out.println(user.getPassword().isEmpty());
-            if (user.getPassword().isEmpty()) {
-                encodedPassword = principalDetails.getPassword();
-            } else {
-                encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-                principalDetails.setPassword(encodedPassword);
-            }
-            user.setId(principalDetails.getId());
-            user.setPassword(encodedPassword);
             userService.updateUser(user);
         } catch (DataNotFoundException e) {
             model.addAttribute("code", ResultCode.DATA_NOT_FOUND.value());
@@ -128,12 +106,15 @@ public class UserController {
     }
 
     @PostMapping("/user/delete")
-    public String deleteUser(@RequestBody String password, @AuthenticationPrincipal PrincipalDetails principalDetails, Model model) {
+    public String deleteUser(@RequestBody String inputPassword, Model model) {
         try {
-            String inputPw = password.substring(9);
-            if (!bCryptPasswordEncoder.matches(inputPw, principalDetails.getPassword()))
+            String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String nowPassword = userService.getEncodedPassword(username);
+            inputPassword = inputPassword.substring(9);
+            if (!bCryptPasswordEncoder.matches(inputPassword, nowPassword)) {
                 return "redirect:/user/withdrawform?code=" + ResultCode.MISMATCH_PASSWORD.value();
-            userService.deleteUser(principalDetails.getId());
+            }
+            userService.deleteUser(username);
             model.addAttribute("code", 2);
         } catch (DataNotFoundException e) {
             model.addAttribute("code", ResultCode.DATA_NOT_FOUND.value());
@@ -152,9 +133,15 @@ public class UserController {
     }
 
     @PostMapping("/user/checkpw")
-    public String checkPassword(@RequestBody String password, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        String inputPw = password.substring(9);
-        if (bCryptPasswordEncoder.matches(inputPw, principalDetails.getPassword()))
+    public String checkPassword(@RequestBody String inputPassword) {
+        // Question)
+        //String nowPassword = userService.getUserByUsername(username).getPassword();
+        //String password = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String nowPassword = userService.getEncodedPassword(username);
+        inputPassword = inputPassword.substring(9);
+        if (bCryptPasswordEncoder.matches(inputPassword, nowPassword))
             return "redirect:/user/updateform";
         return "redirect:/user/pwcheckform?code=" + ResultCode.MISMATCH_PASSWORD.value();
     }
@@ -165,25 +152,23 @@ public class UserController {
     }
 
     @GetMapping("/checkusername")
-    public @ResponseBody Integer checkDuplicateUsername(@RequestParam String username, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Long id = null;
-        if (principalDetails != null)
-            id = principalDetails.getId();
-        return userService.countDuplicateUsername(id, username);
+    public @ResponseBody Integer checkDuplicateUsername(@RequestParam String username) {
+        return userService.countDuplicateUsername(username);
     }
 
     @GetMapping("/checkemail")
-    public @ResponseBody Integer checkDuplicateEmail(@RequestParam String email, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Long id = null;
-        if (principalDetails != null)
-            id = principalDetails.getId();
-        return userService.countDuplicateEmail(id, email);
+    public @ResponseBody Integer checkDuplicateEmail(@RequestParam String email) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (username.equals("anonymousUser"))
+            username = null;
+        return userService.countDuplicateEmail(username, email);
     }
 
     @PostMapping("/checknowpw")
-    public @ResponseBody boolean checkNowPassword(@RequestBody String nowPassword, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        String inputPw = nowPassword.substring(12);
-        return bCryptPasswordEncoder.matches(inputPw, principalDetails.getPassword());
+    public @ResponseBody boolean checkNowPassword(@RequestBody String inputPassword) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String nowPassword = userService.getEncodedPassword(username);
+        inputPassword = inputPassword.substring(12);
+        return bCryptPasswordEncoder.matches(inputPassword, nowPassword);
     }
 }
-

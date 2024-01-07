@@ -4,6 +4,7 @@ import com.security.web3.exception.DataNotFoundException;
 import com.security.web3.mapper.UserMapper;
 import com.security.web3.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +13,12 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public void createUser(UserVo user) {
+        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
         userMapper.createUser(user);
     }
 
@@ -31,22 +37,30 @@ public class UserService {
     }
 
     public void updateUser(UserVo user) {
+        if (!user.getPassword().isEmpty()) {
+            String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
+        }
         int result = userMapper.updateUser(user);
         if (result < 1)
-            throw new DataNotFoundException("[UPDATE fail] Not exist user: id = " + user.getId());
+            throw new DataNotFoundException("[UPDATE fail] Not exist user: username = " + user.getUsername());
     }
 
-    public void deleteUser(long id) {
-        int result = userMapper.deleteUser(id);
+    public void deleteUser(String username) {
+        int result = userMapper.deleteUser(username);
         if (result < 1)
-            throw new DataNotFoundException("[DELETE fail] Not exist user: id = " + id);
+            throw new DataNotFoundException("[DELETE fail] Not exist user: username = " + username);
     }
 
-    public int countDuplicateUsername(Long id, String username) {
-        return userMapper.countDuplicateUsername(id, username);
+    public int countDuplicateUsername(String username) {
+        return userMapper.countDuplicateUsername(username);
     }
 
-    public int countDuplicateEmail(Long id, String email) {
-        return userMapper.countDuplicateEmail(id, email);
+    public int countDuplicateEmail(String username, String email) {
+        return userMapper.countDuplicateEmail(username, email);
+    }
+
+    public String getEncodedPassword(String username) {
+        return userMapper.getEncodedPassword(username);
     }
 }

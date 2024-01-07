@@ -1,5 +1,6 @@
 package com.security.web3.security;
 
+import com.security.web3.service.UserService;
 import com.security.web3.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -9,31 +10,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class UserAuthenticationProvider implements AuthenticationProvider {
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
-        UserVo user = (UserVo) userDetailsService.loadUserByUsername(username);
-
-        System.out.println(user.getId());
-        System.out.println(user.getEmail());
-        System.out.println(user.getUsername());
+        UserVo user = userService.getUserByUsername(username);
 
         if (user == null)
             throw new BadCredentialsException("Not exist username: username = " + username);
@@ -43,7 +36,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("USER"));
 
-        return new UsernamePasswordAuthenticationToken(user.getId(), password, authorities);
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
 
     @Override
