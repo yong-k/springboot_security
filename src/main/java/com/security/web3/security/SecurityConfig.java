@@ -18,12 +18,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/user/**").authenticated()
-//                        .requestMatchers("/user/**").hasAnyRole("USER")
-                        .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .requestMatchers("/", "/loginform", "/joinform", "/join", "/checkusername", "/checkemail").permitAll()
+                        .requestMatchers("/user/**").hasAnyRole("USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -31,16 +29,20 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .usernameParameter("id")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/user/info")
+                        .defaultSuccessUrl("/user/info", true)
                         .failureHandler(loginFailureHandler())
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
-                )
-                .authenticationProvider(authenticationProvider());
+                );
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        return new UserAuthenticationProvider();
     }
 
     @Bean
@@ -59,10 +61,5 @@ public class SecurityConfig {
                 .ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
         );
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        return new UserAuthenticationProvider();
     }
 }

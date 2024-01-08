@@ -38,6 +38,7 @@
                         <button id="loginBtn" type="button" class="btn_l btn_top">로그인</button>
                         <a class="btn_l btn_gray" href="/joinform">회원가입</a>
                     </div>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 </form>
             </div>
         </div>

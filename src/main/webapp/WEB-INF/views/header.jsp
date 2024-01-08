@@ -9,29 +9,34 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </head>
 <body>
-<header class="p-3">
-    <div class="container">
-        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li class="nav-item"><a href="/" class="nav-link link-body-emphasis px-2">MAIN_LOGO</a></li>
-            </ul>
+    <header class="p-3">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li class="nav-item"><a href="/" class="nav-link link-body-emphasis px-2">MAIN_LOGO</a></li>
+                </ul>
 
-            <sec:authorize access="isAnonymous()">
-                <ul class="nav">
-                    <li class="nav-item"><a href="/loginform" class="nav-link link-body-emphasis px-2">로그인</a></li>
-                    <li class="nav-item"><a href="/joinform" class="nav-link link-body-emphasis px-2">회원가입</a></li>
-                </ul>
-            </sec:authorize>
-            <sec:authorize access="isAuthenticated()">
-                <ul class="nav">
-                    <%--<li class="nav-item"><span class="nav-link link-body-emphasis px-2"><sec:authentication property="principal.username"/>님</span></li>--%>
-                    <li class="nav-item"><span class="nav-link link-body-emphasis px-2"><sec:authentication property="principal"/>님</span></li>
-                    <li class="nav-item"><a href="/user/info" class="nav-link link-body-emphasis px-2">마이페이지</a></li>
-                    <li class="nav-item"><a href="/logout" class="nav-link link-body-emphasis px-2">로그아웃</a></li>
-                </ul>
-            </sec:authorize>
+                <sec:authorize access="isAnonymous()">
+                    <ul class="nav">
+                        <li class="nav-item"><a href="/loginform" class="nav-link link-body-emphasis px-2">로그인</a></li>
+                        <li class="nav-item"><a href="/joinform" class="nav-link link-body-emphasis px-2">회원가입</a></li>
+                    </ul>
+                </sec:authorize>
+                <sec:authorize access="isAuthenticated()">
+                    <ul class="nav">
+                        <%--<li class="nav-item"><span class="nav-link link-body-emphasis px-2"><sec:authentication property="principal.username"/>님</span></li>--%>
+                        <li class="nav-item"><span class="nav-link link-body-emphasis px-2"><sec:authentication property="principal"/>님</span></li>
+                        <li class="nav-item"><a href="/user/info" class="nav-link link-body-emphasis px-2">마이페이지</a></li>
+                        <li class="nav-item">
+                            <form name="logoutform" action="/logout" method="post">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <button class="nav-link link-body-emphasis px-2">로그아웃</button>
+                            </form>
+                        </li>
+                    </ul>
+                </sec:authorize>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 </body>
 </html>

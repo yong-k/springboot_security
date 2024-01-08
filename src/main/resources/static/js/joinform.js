@@ -3,6 +3,14 @@ let pwFlag = false;
 let emailFlag = false;
 
 $(document).ready(function(){
+    let queryString = window.location.search;
+    let urlParams = new URLSearchParams(queryString);
+    let code = urlParams.get("code");
+    if (code == 1) {
+        alert("회원가입이 완료되었습니다.");
+        window.location.href="/loginform";
+    }
+
     submitClose();
     defaultInputCheck();
 

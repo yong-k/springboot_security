@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Security;
+
 @Slf4j
 @Controller
 public class UserController {
@@ -50,7 +52,7 @@ public class UserController {
             log.error("Error in UserController.createUser()", e);
             return "error/error";
         }
-        return "redirect:/loginform?code=" + ResultCode.JOIN_COMPLETE.value();
+        return "redirect:/joinform?code=" + ResultCode.JOIN_COMPLETE.value();
     }
 
     @GetMapping("/user/info")
@@ -110,7 +112,7 @@ public class UserController {
         try {
             String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String nowPassword = userService.getEncodedPassword(username);
-            inputPassword = inputPassword.substring(9);
+            inputPassword = inputPassword.substring(9, inputPassword.indexOf("&_csrf="));
             if (!bCryptPasswordEncoder.matches(inputPassword, nowPassword)) {
                 return "redirect:/user/withdrawform?code=" + ResultCode.MISMATCH_PASSWORD.value();
             }
@@ -124,7 +126,7 @@ public class UserController {
             log.error("Error in UserController.deleteUser()", e);
             return "error/error";
         }
-        return "redirect:/?code=" + ResultCode.WITHDRAW_COMPLETE.value();
+        return "redirect:/user/withdrawform?code=" + ResultCode.WITHDRAW_COMPLETE.value();
     }
 
     @GetMapping("/user/pwcheckform")
@@ -134,13 +136,13 @@ public class UserController {
 
     @PostMapping("/user/checkpw")
     public String checkPassword(@RequestBody String inputPassword) {
-        // Question)
+        // Question
         //String nowPassword = userService.getUserByUsername(username).getPassword();
         //String password = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String nowPassword = userService.getEncodedPassword(username);
-        inputPassword = inputPassword.substring(9);
+        inputPassword = inputPassword.substring(9, inputPassword.indexOf("&_csrf="));
         if (bCryptPasswordEncoder.matches(inputPassword, nowPassword))
             return "redirect:/user/updateform";
         return "redirect:/user/pwcheckform?code=" + ResultCode.MISMATCH_PASSWORD.value();

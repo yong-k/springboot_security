@@ -7,18 +7,8 @@
     <meta charset="UTF-8">
     <title>web3 : 회원탈퇴</title>
     <link href="/css/style.css" rel="stylesheet">
-    <script>
-        /**
-         * [code]
-         * -3 : 비밀번호가 일치하지 않습니다.
-         * */
-        let queryString = window.location.search;
-        let urlParams = new URLSearchParams(queryString);
-        let code = urlParams.get("code");
-
-        if (code == -3)
-            alert("비밀번호가 일치하지 않습니다.");
-    </script>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="/js/withdrawform.js"></script>
 </head>
 <body>
     <sec:authorize access="permitAll()">
@@ -43,6 +33,7 @@
                     <div class="confirm-btn-box">
                         <button class="btn_l btn_top">탈퇴</button>
                     </div>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 </form>
             </div>
         </div>

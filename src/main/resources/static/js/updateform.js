@@ -3,6 +3,11 @@ let emailFlag = true;
 let changePwFlag = true;
 
 $(document).ready(function(){
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function(e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
 
     defaultInputCheck();
 
@@ -62,28 +67,28 @@ function checkNowPassword() {
         url: "/checknowpw",
         data: {"nowPassword" : nowPassword}
     })
-    .done(function (response) {
-        if (response === false) {
-            $("#nowPassword").addClass("is-invalid");
-            $("#nowPasswordErrMsg").show();
-        } else {
-            pwFlag = true;
-        }
-    })
-    .fail(function (e) {
-        console.log(e.status);
-        console.log(e.responseText);
-    });
+        .done(function (response) {
+            if (response === false) {
+                $("#nowPassword").addClass("is-invalid");
+                $("#nowPasswordErrMsg").show();
+            } else {
+                pwFlag = true;
+            }
+        })
+        .fail(function (e) {
+            console.log(e.status);
+            console.log(e.responseText);
+        });
 }
 
 function checkPassword() {
     if ($("#password").val() == $("#password-check").val()) {
-    $("#password").removeClass("is-invalid");
+        $("#password").removeClass("is-invalid");
         $("#password-check").removeClass("is-invalid");
         hideErrorMsg($("#password-checkErrMsg"));
         changePwFlag = true;
     } else if ($("#password-check").val() != ""
-                && $("#password").val() != $("#password-check").val()) {
+        && $("#password").val() != $("#password-check").val()) {
         $("#password").addClass("is-invalid");
         $("#password-check").addClass("is-invalid");
         showErrorMsg($("#password-checkErrMsg"), "비밀번호가 일치하지 않습니다.");
@@ -126,25 +131,25 @@ function checkEmail() {
             url: "/checkemail",
             data: {"email" : email}
         })
-        .done(function (response) {
-            if (response > 0) {
-                $("#email").addClass("is-invalid");
-                showErrorMsg($("#emailErrMsg"), "사용할 수 없는 이메일입니다.");
-            } else {
-                emailFlag = true;
-            }
-        })
-        .fail(function (e) {
-            console.log(e.status);
-            console.log(e.responseText);
-        });
+            .done(function (response) {
+                if (response > 0) {
+                    $("#email").addClass("is-invalid");
+                    showErrorMsg($("#emailErrMsg"), "사용할 수 없는 이메일입니다.");
+                } else {
+                    emailFlag = true;
+                }
+            })
+            .fail(function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+            });
     }
 }
 
 function oninputPhone(phone) {
     phone.value = phone.value
-            .replace(/[^0-9]/g, '')
-            .replace(/(^02.{0}|^01.{1}|[0-9]{3,4})([0-9]{3,4})([0-9]{4})/g, "$1-$2-$3");
+        .replace(/[^0-9]/g, '')
+        .replace(/(^02.{0}|^01.{1}|[0-9]{3,4})([0-9]{3,4})([0-9]{4})/g, "$1-$2-$3");
 }
 
 function isEmailFormat(email) {

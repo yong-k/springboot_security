@@ -34,7 +34,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("password is not matched.");
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("USER"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }

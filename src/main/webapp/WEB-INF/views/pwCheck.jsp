@@ -39,6 +39,7 @@
                     <div class="confirm-btn-box">
                         <button class="btn_l btn_top">확인</button>
                     </div>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 </form>
             </div>
         </div>
