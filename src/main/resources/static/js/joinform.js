@@ -66,7 +66,7 @@ function checkUsername() {
             data: {"username" : username}
         })
             .done(function (response) {
-                if (response > 0) {
+                if (response === false) {
                     $("#username").addClass("is-invalid");
                     showErrorMsg($("#usernameErrMsg"), "사용할 수 없는 아이디입니다.");
                 } else {
@@ -140,7 +140,7 @@ function checkEmail() {
             data: {"email" : email}
         })
             .done(function (response) {
-                if (response > 0) {
+                if (response === false) {
                     $("#email").addClass("is-invalid");
                     showErrorMsg($("#emailErrMsg"), "사용할 수 없는 이메일입니다.");
                 } else {

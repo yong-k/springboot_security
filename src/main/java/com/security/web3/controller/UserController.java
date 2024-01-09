@@ -7,13 +7,14 @@ import com.security.web3.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Security;
+import java.util.Collection;
 
 @Slf4j
 @Controller
@@ -21,9 +22,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @GetMapping("/")
     public String main() {
@@ -108,14 +106,11 @@ public class UserController {
     }
 
     @PostMapping("/user/delete")
-    public String deleteUser(@RequestBody String inputPassword, Model model) {
+    public String deleteUser(@RequestParam("password") String inputPassword, Model model) {
         try {
             String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            String nowPassword = userService.getEncodedPassword(username);
-            inputPassword = inputPassword.substring(9, inputPassword.indexOf("&_csrf="));
-            if (!bCryptPasswordEncoder.matches(inputPassword, nowPassword)) {
+            if (!userService.isMatchPassword(username, inputPassword))
                 return "redirect:/user/withdrawform?code=" + ResultCode.MISMATCH_PASSWORD.value();
-            }
             userService.deleteUser(username);
             model.addAttribute("code", 2);
         } catch (DataNotFoundException e) {
@@ -135,16 +130,16 @@ public class UserController {
     }
 
     @PostMapping("/user/checkpw")
-    public String checkPassword(@RequestBody String inputPassword) {
-        // Question
-        //String nowPassword = userService.getUserByUsername(username).getPassword();
-        //String password = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String nowPassword = userService.getEncodedPassword(username);
-        inputPassword = inputPassword.substring(9, inputPassword.indexOf("&_csrf="));
-        if (bCryptPasswordEncoder.matches(inputPassword, nowPassword))
-            return "redirect:/user/updateform";
+    public String checkPassword(@RequestParam("password") String inputPassword, Model model) {
+        try {
+            String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (userService.isMatchPassword(username, inputPassword))
+                return "redirect:/user/updateform";
+        } catch (Exception e) {
+            model.addAttribute("code", ResultCode.UNKNOWN_ERROR.value());
+            log.error("Error in UserController.checkPassword()", e);
+            return "error/error";
+        }
         return "redirect:/user/pwcheckform?code=" + ResultCode.MISMATCH_PASSWORD.value();
     }
 
@@ -154,23 +149,22 @@ public class UserController {
     }
 
     @GetMapping("/checkusername")
-    public @ResponseBody Integer checkDuplicateUsername(@RequestParam String username) {
-        return userService.countDuplicateUsername(username);
+    public @ResponseBody boolean checkDuplicateUsername(@RequestParam String username) {
+        return userService.countDuplicateUsername(username) <= 0;
     }
 
     @GetMapping("/checkemail")
-    public @ResponseBody Integer checkDuplicateEmail(@RequestParam String email) {
+    public @ResponseBody boolean checkDuplicateEmail(@RequestParam String email) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (username.equals("anonymousUser"))
+        Collection<? extends GrantedAuthority> role = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        if (role.contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS")))
             username = null;
-        return userService.countDuplicateEmail(username, email);
+        return userService.countDuplicateEmail(username, email) <= 0;
     }
 
     @PostMapping("/checknowpw")
-    public @ResponseBody boolean checkNowPassword(@RequestBody String inputPassword) {
+    public @ResponseBody boolean checkNowPassword(@RequestParam("nowPassword") String inputPassword) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String nowPassword = userService.getEncodedPassword(username);
-        inputPassword = inputPassword.substring(12);
-        return bCryptPasswordEncoder.matches(inputPassword, nowPassword);
+        return userService.isMatchPassword(username, inputPassword);
     }
 }

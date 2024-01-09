@@ -22,13 +22,6 @@ public class UserService {
         userMapper.createUser(user);
     }
 
-    public UserVo getUserById(long id) {
-        UserVo user = userMapper.getUserById(id);
-        if (user == null)
-            throw new DataNotFoundException("Not exist user: id = " + id);
-        return user;
-    }
-
     public UserVo getUserByUsername(String username) {
         UserVo user = userMapper.getUserByUsername(username);
         if (username == null)
@@ -60,7 +53,8 @@ public class UserService {
         return userMapper.countDuplicateEmail(username, email);
     }
 
-    public String getEncodedPassword(String username) {
-        return userMapper.getEncodedPassword(username);
+    public boolean isMatchPassword(String username, String inputPassword) {
+        String encodedPassword = userMapper.getEncodedPassword(username);
+        return bCryptPasswordEncoder.matches(inputPassword, encodedPassword);
     }
 }
